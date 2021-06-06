@@ -2,22 +2,44 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour
+public class Chunk
 {
-    public MeshRenderer MeshRenderer;
-    public MeshFilter MeshFilter;
+    public ChunkCoord Coord;
+    
+    private readonly World _world;
+    private readonly GameObject _chunkObject;
+    private readonly MeshRenderer _meshRenderer;
+    private readonly MeshFilter _meshFilter;
 
     private readonly List<Vector3> _vertices = new List<Vector3>();
     private readonly List<int> _triangles = new List<int>();
     private readonly List<Vector2> _uvs = new List<Vector2>();
-    private readonly byte[,,] _voxelMap = new byte[VoxelData.ChunkXWidth, VoxelData.ChunkYHeight, VoxelData.ChunkZDepth];
+    private readonly byte[,,] _voxelMap = new byte[VoxelData.ChunkXWidth, VoxelData.ChunkYHeight, VoxelData.ChunkXWidth];
 
-    private World _world;
     private int _vertexIndex = 0;
-
-    void Start()
+    
+    public bool IsActive
     {
-        _world = GameObject.Find("World").GetComponent<World>();
+        get { return _chunkObject.activeSelf; }
+        set { _chunkObject.SetActive(value); }
+    }
+
+    public Vector3 position => _chunkObject.transform.position;
+
+    public Chunk(World world, ChunkCoord coord)
+    {
+        Coord = coord;
+
+        _world = world;
+        _chunkObject = new GameObject();
+        _meshFilter = _chunkObject.AddComponent<MeshFilter>();
+        _meshRenderer = _chunkObject.AddComponent<MeshRenderer>();
+
+        _meshRenderer.material = _world.Material;
+        _chunkObject.transform.SetParent(world.transform);
+        _chunkObject.transform.position = new Vector3(coord.X * VoxelData.ChunkXWidth,0f, coord.Z * VoxelData.ChunkXWidth);
+        _chunkObject.name = $"Chunk: {coord.X},{coord.Z}";
+
         PopulateVoxelMap();
         CreateMeshData();
         CreateMesh();
@@ -27,14 +49,9 @@ public class Chunk : MonoBehaviour
     {
         for (int x = 0; x < VoxelData.ChunkXWidth; x++)
         for (int y = 0; y < VoxelData.ChunkYHeight; y++)
-        for (int z = 0; z < VoxelData.ChunkZDepth; z++)
+        for (int z = 0; z < VoxelData.ChunkXWidth; z++)
         {
-            if (y < 1) 
-                _voxelMap[x, y, z] = 1; // Bedrock, Bottom
-            else if (y == VoxelData.ChunkYHeight-1) 
-                _voxelMap[x, y, z] = 3; // Grass, Top
-            else 
-                _voxelMap[x, y, z] = 2; // stone, middle
+            _voxelMap[x, y, z] = _world.GetVoxel(new Vector3(x, y, z) + position);
         }
     }
     
@@ -42,7 +59,7 @@ public class Chunk : MonoBehaviour
     {
         for (int x = 0; x < VoxelData.ChunkXWidth; x++)
         for (int y = 0; y < VoxelData.ChunkYHeight; y++)
-        for (int z = 0; z < VoxelData.ChunkZDepth; z++)
+        for (int z = 0; z < VoxelData.ChunkXWidth; z++)
         {
             AddVoxelDataToChunk(new Vector3(x, y, z));
         }
@@ -81,14 +98,16 @@ public class Chunk : MonoBehaviour
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (x < 0 || x > VoxelData.ChunkXWidth - 1 ||
-            y < 0 || y > VoxelData.ChunkYHeight - 1 ||
-            z < 0 || z > VoxelData.ChunkZDepth - 1
-        )
-            return false;
+        if (!IsVoxelInChunk(x, y, z))
+            return _world.BlockTypes[_world.GetVoxel(pos + position)].IsSolid;
 
         return _world.BlockTypes[_voxelMap[x, y, z]].IsSolid;
     }
+
+    bool IsVoxelInChunk(int x, int y, int z) => 
+        x >= 0 && x <= VoxelData.ChunkXWidth -1 &&
+        y >= 0 && y <= VoxelData.ChunkYHeight -1 &&
+        z >= 0 && z <= VoxelData.ChunkXWidth -1 ;
 
     private void CreateMesh()
     {
@@ -100,20 +119,18 @@ public class Chunk : MonoBehaviour
 
         mesh.RecalculateNormals();
 
-        MeshFilter.mesh = mesh;
+        _meshFilter.mesh = mesh;
     }
 
     private void AddTexture(int textureId)
     {
         float y = textureId / VoxelData.TextureAtlasSizeInBlocks;
         float x = textureId - (y * VoxelData.TextureAtlasSizeInBlocks);
-        Debug.Log($"ID: {textureId}, N: {VoxelData.TextureAtlasSizeInBlocks}, X: {x}, Y: {y}");
 
         x *= VoxelData.NormalizedBlockTextureSize;
         y *= VoxelData.NormalizedBlockTextureSize;
         y = 1f - y - VoxelData.NormalizedBlockTextureSize;
-
-        Debug.Log($"ID: {textureId}, N: {VoxelData.TextureAtlasSizeInBlocks}, X: {x}, Y: {y}");
+        
         _uvs.Add(new Vector2(x, y));
         _uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
         _uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
