@@ -2,11 +2,11 @@ using UnityEngine;
 
 public static class VoxelData
 {
-    public static readonly int WorldSizeInChunks = 100;
-    public static readonly int ViewDistanceInChunks = 5;
+    public static readonly int ChunkXWidth = 16;
+    public static readonly int ChunkYHeight = 128;
+    public static readonly int WorldSizeInChunks = 20;
+    public static readonly int ViewDistanceInChunks = 10;
 
-    public static readonly int ChunkXWidth = 2;
-    public static readonly int ChunkYHeight = 5;
     //public static readonly int ChunkZDepth = 5;
     
     public static readonly int TextureAtlasSizeInBlocks = 16;

@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class World : MonoBehaviour
@@ -9,6 +7,9 @@ public class World : MonoBehaviour
     public Vector3 SpawnPosition;
     public Material Material;
     public BlockType[] BlockTypes;
+    public int Seed;
+    public BiomeAttribute Biome;
+
 
     private Chunk[,] _chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
     private List<ChunkCoord> _activeChunks = new List<ChunkCoord>();
@@ -17,6 +18,7 @@ public class World : MonoBehaviour
 
     private void Start()
     {
+        Random.InitState(Seed);
         SpawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f, VoxelData.ChunkYHeight+2, (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks / 2f);
         GenerateWorld();
         _playerLastChunkCoord = GetChunkCoordFromVector3(Player.position);
@@ -86,20 +88,48 @@ public class World : MonoBehaviour
 
     public byte GetVoxel(Vector3 pos)
     {
-        if (!IsVoxelInWorld(pos))
-            return 0;
 
-        if (pos.y < 1)
-            return 1; // Bedrock, Bottom
-        else if (Mathf.FloorToInt(pos.y) == VoxelData.ChunkYHeight - 1)
-            return 3; // Grass, Top
+        int xPos = Mathf.FloorToInt(pos.x);
+        int yPos = Mathf.FloorToInt(pos.y);
+        int zPos = Mathf.FloorToInt(pos.z);
+
+        /* Immutable Pass */
+
+        // if outside the world, air
+        if (!IsVoxelInWorld(pos)) return BlockTypeEnums.Air.ToByte(); 
+
+        // bottom chunk, bedrock
+        if (yPos == 0) return BlockTypeEnums.Bedrock.ToByte(); 
+
+        /* Basic Terrain Pass */
+
+        int terrainHeight = Mathf.FloorToInt(VoxelData.ChunkYHeight * Noise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, Biome.TerrainScale));
+        byte voxelValue = 0;
+
+        if (yPos == terrainHeight)
+            voxelValue = BlockTypeEnums.Grass.ToByte();
+        else if (yPos < terrainHeight && yPos > terrainHeight - 4)
+            voxelValue = BlockTypeEnums.Dirt.ToByte();
+        else if (yPos > terrainHeight)
+            voxelValue = BlockTypeEnums.Air.ToByte();
         else
-            return 2; // stone, middle
+            voxelValue = BlockTypeEnums.Stone.ToByte(); 
+
+        /* Second Pass */
+        if (voxelValue == 2)
+        {
+            foreach (var lode in Biome.Lodes)
+            {
+                if (yPos > lode.MinHeight && yPos < lode.MaxHeight)
+                    if (Noise.Get3DPerlin(pos, lode.NoiseOffset, lode.Scale, lode.Threshold))
+                        voxelValue = lode.BlockId;
+            }
+        }
+        return voxelValue;
     }
 
     void CreateNewChunk(int x, int z)
     {
-        Debug.Log($"Create: {x}, {z}");
         _chunks[x, z] = new Chunk(this, new ChunkCoord(x, z));
         _activeChunks.Add(new ChunkCoord(x, z));
     }
