@@ -2,12 +2,17 @@ using UnityEngine;
 
 public static class VoxelData
 {
-    public static readonly int ChunkXWidth = 5;
-    public static readonly int ChunkYHeight = 12;
-    public static readonly int ChunkZDepth = 5;
+    public static readonly int WorldSizeInChunks = 100;
+    public static readonly int ViewDistanceInChunks = 5;
 
+    public static readonly int ChunkXWidth = 2;
+    public static readonly int ChunkYHeight = 5;
+    //public static readonly int ChunkZDepth = 5;
+    
     public static readonly int TextureAtlasSizeInBlocks = 16;
+    
     public static float NormalizedBlockTextureSize => 1f / (float) TextureAtlasSizeInBlocks;
+    public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkXWidth;
 
     public static readonly Vector3[] VoxelVerts = new Vector3[8]
     {
