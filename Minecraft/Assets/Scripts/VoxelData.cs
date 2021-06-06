@@ -3,8 +3,11 @@ using UnityEngine;
 public static class VoxelData
 {
     public static readonly int ChunkXWidth = 5;
-    public static readonly int ChunkYHeight = 10;
+    public static readonly int ChunkYHeight = 12;
     public static readonly int ChunkZDepth = 5;
+
+    public static readonly int TextureAtlasSizeInBlocks = 16;
+    public static float NormalizedBlockTextureSize => 1f / (float) TextureAtlasSizeInBlocks;
 
     public static readonly Vector3[] VoxelVerts = new Vector3[8]
     {

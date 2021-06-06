@@ -161,7 +161,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: fde46f10618fcb340b7a98e96ad774db, type: 2}
+  - {fileID: 2100000, guid: aa5e4db37035b164f82da91af1aff277, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -389,9 +389,94 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 4.16, z: -13.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2123740581
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2123740583}
+  - component: {fileID: 2123740582}
+  m_Layer: 0
+  m_Name: World
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2123740582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123740581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e41cced4a36af445a7a1df11bd566d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: {fileID: 2100000, guid: aa5e4db37035b164f82da91af1aff277, type: 2}
+  BlockTypes:
+  - BlockName: Air
+    IsSolid: 0
+    BackFaceTexture: 0
+    FrontFaceTexture: 0
+    TopFaceTexture: 0
+    BottomFaceTexture: 0
+    LeftFaceTexture: 0
+    RightFaceTexture: 0
+  - BlockName: Bedrock
+    IsSolid: 1
+    BackFaceTexture: 17
+    FrontFaceTexture: 17
+    TopFaceTexture: 17
+    BottomFaceTexture: 17
+    LeftFaceTexture: 17
+    RightFaceTexture: 17
+  - BlockName: Stone
+    IsSolid: 1
+    BackFaceTexture: 1
+    FrontFaceTexture: 1
+    TopFaceTexture: 1
+    BottomFaceTexture: 1
+    LeftFaceTexture: 1
+    RightFaceTexture: 1
+  - BlockName: Grass
+    IsSolid: 1
+    BackFaceTexture: 3
+    FrontFaceTexture: 3
+    TopFaceTexture: 146
+    BottomFaceTexture: 2
+    LeftFaceTexture: 3
+    RightFaceTexture: 3
+  - BlockName: Furnace
+    IsSolid: 1
+    BackFaceTexture: 44
+    FrontFaceTexture: 61
+    TopFaceTexture: 62
+    BottomFaceTexture: 62
+    LeftFaceTexture: 46
+    RightFaceTexture: 45
+--- !u!4 &2123740583
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123740581}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.0516634, y: 0.11819935, z: -0.2259183}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
