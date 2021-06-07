@@ -19,7 +19,7 @@ public class World : MonoBehaviour
     private void Start()
     {
         Random.InitState(Seed);
-        SpawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f, VoxelData.ChunkYHeight+2, (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks / 2f);
+        SpawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f, VoxelData.ChunkYHeight, (VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f);
         GenerateWorld();
         _playerLastChunkCoord = GetChunkCoordFromVector3(Player.position);
     }
@@ -37,10 +37,10 @@ public class World : MonoBehaviour
     void GenerateWorld()
     {
         for (int x = (VoxelData.WorldSizeInChunks / 2) - VoxelData.ViewDistanceInChunks; x < (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks; x++)
-        for (int z = (VoxelData.WorldSizeInChunks / 2) - VoxelData.ViewDistanceInChunks; z < (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks; z++)
-        {
-            CreateNewChunk(x, z);
-        }
+            for (int z = (VoxelData.WorldSizeInChunks / 2) - VoxelData.ViewDistanceInChunks; z < (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks; z++)
+            {
+                CreateNewChunk(x, z);
+            }
         Player.position = SpawnPosition;
     }
 
@@ -57,33 +57,49 @@ public class World : MonoBehaviour
         var previouslyActiveChunks = new List<ChunkCoord>(_activeChunks);
 
         for (int x = coord.X - VoxelData.ViewDistanceInChunks; x < coord.X + VoxelData.ViewDistanceInChunks; x++)
-        for (int z = coord.Z - VoxelData.ViewDistanceInChunks; z < coord.Z + VoxelData.ViewDistanceInChunks; z++)
-        {
-            var chunkCoord = new ChunkCoord(x, z);
-            if (IsChunkInWorld(chunkCoord))
-                if (_chunks[x, z] == null)
-                {
-                    CreateNewChunk(x, z);
-                }
-                else if (!_chunks[x, z].IsActive)
-                {
-                    _chunks[x, z].IsActive = true;
-                    _activeChunks.Add(chunkCoord);
-                }
-
-            for (var i = 0; i < previouslyActiveChunks.Count;)
+            for (int z = coord.Z - VoxelData.ViewDistanceInChunks; z < coord.Z + VoxelData.ViewDistanceInChunks; z++)
             {
-                if (previouslyActiveChunks[i].Equals(chunkCoord))
-                    previouslyActiveChunks.RemoveAt(i);
-                else
-                    i++;
+                var chunkCoord = new ChunkCoord(x, z);
+                if (IsChunkInWorld(chunkCoord))
+                    if (_chunks[x, z] == null)
+                    {
+                        CreateNewChunk(x, z);
+                    }
+                    else if (!_chunks[x, z].IsActive)
+                    {
+                        _chunks[x, z].IsActive = true;
+                        _activeChunks.Add(chunkCoord);
+                    }
+
+                for (var i = 0; i < previouslyActiveChunks.Count;)
+                {
+                    if (previouslyActiveChunks[i].Equals(chunkCoord))
+                        previouslyActiveChunks.RemoveAt(i);
+                    else
+                        i++;
+                }
             }
-        }
 
         foreach (var c in previouslyActiveChunks)
         {
             _chunks[c.X, c.Z].IsActive = false;
         }
+    }
+
+    public bool CheckForVoxel(float x, float y, float z)
+    {
+        int xCheck = Mathf.FloorToInt(x);
+        int yCheck = Mathf.FloorToInt(y);
+        int zCheck = Mathf.FloorToInt(z);
+
+        int xChunk = xCheck / VoxelData.ChunkXWidth;
+        int yChunk = yCheck / VoxelData.ChunkYHeight;
+        int zChunk = zCheck / VoxelData.ChunkXWidth;
+
+        xCheck -= (xChunk * VoxelData.ChunkXWidth);
+        zCheck -= (zChunk * VoxelData.ChunkXWidth);
+
+        return BlockTypes[_chunks[xChunk, zChunk]._voxelMap[xCheck, yCheck, zCheck]].IsSolid;
     }
 
     public byte GetVoxel(Vector3 pos)
@@ -96,10 +112,10 @@ public class World : MonoBehaviour
         /* Immutable Pass */
 
         // if outside the world, air
-        if (!IsVoxelInWorld(pos)) return BlockTypeEnums.Air.ToByte(); 
+        if (!IsVoxelInWorld(pos)) return BlockTypeEnums.Air.ToByte();
 
         // bottom chunk, bedrock
-        if (yPos == 0) return BlockTypeEnums.Bedrock.ToByte(); 
+        if (yPos == 0) return BlockTypeEnums.Bedrock.ToByte();
 
         /* Basic Terrain Pass */
 
@@ -113,7 +129,7 @@ public class World : MonoBehaviour
         else if (yPos > terrainHeight)
             voxelValue = BlockTypeEnums.Air.ToByte();
         else
-            voxelValue = BlockTypeEnums.Stone.ToByte(); 
+            voxelValue = BlockTypeEnums.Stone.ToByte();
 
         /* Second Pass */
         if (voxelValue == 2)
@@ -142,7 +158,7 @@ public class World : MonoBehaviour
     {
         if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels &&
             pos.y >= 0 && pos.y < VoxelData.ChunkYHeight &&
-            pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels) 
+            pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
             return true;
         else
             return false;

@@ -10,11 +10,12 @@ public class Chunk
     private readonly GameObject _chunkObject;
     private readonly MeshRenderer _meshRenderer;
     private readonly MeshFilter _meshFilter;
+    //private readonly MeshCollider _meshCollider;
 
     private readonly List<Vector3> _vertices = new List<Vector3>();
     private readonly List<int> _triangles = new List<int>();
     private readonly List<Vector2> _uvs = new List<Vector2>();
-    private readonly byte[,,] _voxelMap = new byte[VoxelData.ChunkXWidth, VoxelData.ChunkYHeight, VoxelData.ChunkXWidth];
+    internal readonly byte[,,] _voxelMap = new byte[VoxelData.ChunkXWidth, VoxelData.ChunkYHeight, VoxelData.ChunkXWidth];
 
     private int _vertexIndex = 0;
     
@@ -34,6 +35,7 @@ public class Chunk
         _chunkObject = new GameObject();
         _meshFilter = _chunkObject.AddComponent<MeshFilter>();
         _meshRenderer = _chunkObject.AddComponent<MeshRenderer>();
+        //_meshCollider = _chunkObject.AddComponent<MeshCollider>();
 
         _meshRenderer.material = _world.Material;
         _chunkObject.transform.SetParent(world.transform);
@@ -43,6 +45,7 @@ public class Chunk
         PopulateVoxelMap();
         CreateMeshData();
         CreateMesh();
+        //_meshCollider.sharedMesh = _meshFilter.mesh;
     }
     
     void PopulateVoxelMap()
