@@ -5,7 +5,6 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public Transform Player;
-    public ChunkCoord PlayerChunkCoord;
     public Vector3 SpawnPosition;
     public Material Material;
     public BlockType[] BlockTypes;
@@ -13,6 +12,8 @@ public class World : MonoBehaviour
     public BiomeAttribute Biome;
     public GameObject DebugScreen;
     public bool IsCreatingChunks;
+    
+    internal ChunkCoord _playerChunkCoord;
 
     private Chunk[,] _chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
     private List<ChunkCoord> _activeChunks = new List<ChunkCoord>();
@@ -29,8 +30,8 @@ public class World : MonoBehaviour
 
     private void Update()
     {
-        PlayerChunkCoord = GetChunkCoordFromVector3(Player.position);
-        if (!PlayerChunkCoord.Equals(_playerLastChunkCoord)) 
+        _playerChunkCoord = GetChunkCoordFromVector3(Player.position);
+        if (!_playerChunkCoord.Equals(_playerLastChunkCoord)) 
             CheckViewDistance();
 
         if (_createChunks.Count > 0 && !IsCreatingChunks)
@@ -73,7 +74,7 @@ public class World : MonoBehaviour
 
     void CheckViewDistance()
     {
-        _playerLastChunkCoord = PlayerChunkCoord;
+        _playerLastChunkCoord = _playerChunkCoord;
         var coord = GetChunkCoordFromVector3(Player.position);
         var previouslyActiveChunks = new List<ChunkCoord>(_activeChunks);
 

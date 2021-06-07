@@ -2,58 +2,56 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public float PlayerHeight = 2f; // 1.8f plus room for error
+    public float PlayerWidth = 0.15f;
     public float WalkSpeed = 3f;
     public float SprintSpeed = 6f;
     public float JumpForce = 5f;
     public float Gravity = -9.8f;
-    
-    public bool IsGrounded;
-    public bool IsSprinting;
 
     private World _world;
     private Transform _cam;
 
-    public float PlayerHeight = 2f; // 1.8f plus room for error
-    public float PlayerWidth = 0.15f;
-    public float BoundsTolerance = 0.1f;
+    internal Vector3 _velocity;
 
     private float _horizontal;
     private float _vertical;
     private float _mouseHorizontal;
     private float _mouseVertical;
-    private float _jump;
-    private float _sprint;
-    private Vector3 _velocity;
-    private float _verticalMomentum;
+    //private float _jump;
+    //private float _sprint;
+    private float _verticalMomentum = 0;
+    private bool _isGrounded;
+    private bool _isSprinting;
     private bool _jumpRequest;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         _cam = GameObject.Find("Main Camera").transform;
         _world = GameObject.Find("World").GetComponent<World>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        GetPlayerInputs();
-    }
-
     private void FixedUpdate()
     {
         CalculateVelocity();
-        if (_jumpRequest) Jump();
+        if (_jumpRequest) 
+            Jump();
 
         transform.Rotate(Vector3.up * _mouseHorizontal);
         _cam.Rotate(Vector3.right * -_mouseVertical);
         transform.Translate(_velocity, Space.World);
     }
+
+    void Update()
+    {
+        GetPlayerInputs();
+    }
+
     private void Jump()
     {
         _verticalMomentum = JumpForce;
-        IsGrounded = false;
+        _isGrounded = false;
         _jumpRequest = false;
     }
 
@@ -64,17 +62,17 @@ public class Player : MonoBehaviour
             _verticalMomentum += Time.fixedDeltaTime * Gravity;
 
         // Sprinting
-        if (IsSprinting)
-            _velocity = (transform.forward * _vertical) + (transform.right * _horizontal) * Time.deltaTime * SprintSpeed;
+        if (_isSprinting)
+            _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) * Time.fixedDeltaTime * SprintSpeed;
         else
-            _velocity = (transform.forward * _vertical) + (transform.right * _horizontal) * Time.deltaTime * WalkSpeed;
+            _velocity = ((transform.forward * _vertical) + (transform.right * _horizontal)) * Time.fixedDeltaTime * WalkSpeed;
 
         // Vertical Momentum Application
         _velocity += Vector3.up * _verticalMomentum * Time.fixedDeltaTime;
 
-        if ((_velocity.z > 0 && FrontBlocked) || (_velocity.z > 0 && BackBlocked))
+        if ((_velocity.z > 0 && FrontBlocked) || (_velocity.z < 0 && BackBlocked))
             _velocity.z = 0;
-        if ((_velocity.x > 0 && LeftBlocked) || (_velocity.x > 0 && RightBlocked))
+        if ((_velocity.x > 0 && LeftBlocked) || (_velocity.x < 0 && RightBlocked))
             _velocity.x = 0;
 
         if (_velocity.y < 0)
@@ -91,15 +89,15 @@ public class Player : MonoBehaviour
         _vertical = Input.GetAxis("Vertical");
         _mouseHorizontal = Input.GetAxis("Mouse X");
         _mouseVertical = Input.GetAxis("Mouse Y");
-        _jump = Input.GetAxis("Jump");
-        _sprint = Input.GetAxis("Sprint");
+        //_jump = Input.GetAxis("Jump");
+        //_sprint = Input.GetAxis("Sprint");
 
         if (Input.GetButtonDown("Sprint"))
-            IsSprinting = true;
+            _isSprinting = true;
         if (Input.GetButtonUp("Sprint"))
-            IsSprinting = false;
+            _isSprinting = false;
 
-        if (IsGrounded && Input.GetButtonDown("Jump"))
+        if (_isGrounded && Input.GetButtonDown("Jump"))
             _jumpRequest = true;
     }
 
@@ -110,7 +108,7 @@ public class Player : MonoBehaviour
             _world.CheckForVoxel(new Vector3(transform.position.x - PlayerWidth, transform.position.y + downSpeed, transform.position.z + PlayerWidth)) ||
             _world.CheckForVoxel(new Vector3(transform.position.x + PlayerWidth, transform.position.y + downSpeed, transform.position.z + PlayerWidth)))
         {
-            IsGrounded = true;
+            _isGrounded = true;
             return 0f;
         }
         else
@@ -126,7 +124,8 @@ public class Player : MonoBehaviour
             _world.CheckForVoxel(new Vector3(transform.position.x - PlayerWidth, transform.position.y + PlayerHeight + upSpeed, transform.position.z + PlayerWidth)) ||
             _world.CheckForVoxel(new Vector3(transform.position.x + PlayerWidth, transform.position.y + PlayerHeight + upSpeed, transform.position.z + PlayerWidth)))
         {
-            IsGrounded = true;
+            // TODO: Fix?
+            _isGrounded = true;
             return 0f;
         }
         else

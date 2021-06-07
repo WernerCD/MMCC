@@ -34,18 +34,26 @@ public class DebugScreen : MonoBehaviour
         {
             _timer += Time.deltaTime;
         }
-        int x = Mathf.FloorToInt(_world.Player.position.x) - _halfWorldSizeInVoxels;
-        int y = Mathf.FloorToInt(_world.Player.position.y);
-        int z = Mathf.FloorToInt(_world.Player.position.z) - _halfWorldSizeInVoxels;
-
-        int cx = _world.PlayerChunkCoord.X / _halfWorldSizeInChunks;
-        int cz = _world.PlayerChunkCoord.Z / _halfWorldSizeInChunks;
 
         StringBuilder debugText = new StringBuilder();
         debugText.AppendLine($"MMCC Tutorial");
         debugText.AppendLine($"FPS: {_frameRate}");
-        debugText.AppendLine($"Chunk: {cx}, {cz}");
-        debugText.AppendLine($"XYZ: {x},{y},{z}");
+
+        if (_world._playerChunkCoord != null)
+        {
+            int cx = _world._playerChunkCoord.X / _halfWorldSizeInChunks;
+            int cz = _world._playerChunkCoord.Z / _halfWorldSizeInChunks;
+            debugText.AppendLine($"Chunk: {cx}, {cz}");
+        }
+
+        if (_world.Player != null)
+        {
+            int x = Mathf.FloorToInt(_world.Player.position.x) - _halfWorldSizeInVoxels;
+            int y = Mathf.FloorToInt(_world.Player.position.y);
+            int z = Mathf.FloorToInt(_world.Player.position.z) - _halfWorldSizeInVoxels;
+            debugText.AppendLine($"XYZ: {x},{y},{z}");
+        }
+
         _text.text = debugText.ToString();
     }
 }
