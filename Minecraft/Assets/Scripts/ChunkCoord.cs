@@ -35,4 +35,6 @@ public class ChunkCoord
         if (other.X == X && other.Z == Z) return true;
         return false;
     }
+
+    public override string ToString() => $"{X}, {Z}";
 }

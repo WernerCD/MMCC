@@ -9,10 +9,10 @@ public class Noise
     /// <param name="offest"></param>
     /// <param name="scale"></param>
     /// <returns></returns>
-    public static float Get2DPerlin(Vector2 pos, float offest, float scale)
+    public static float Get2DPerlin(Vector2 pos, float offset, float scale)
     {
-        return Mathf.PerlinNoise((pos.x + 0.1f) / VoxelData.ChunkXWidth * scale, (pos.y + 0.1f) / VoxelData.ChunkXWidth * scale);
-    }
+        return Mathf.PerlinNoise((pos.x + 0.1f) / VoxelData.ChunkXWidth * scale + offset, (pos.y + 0.1f) / VoxelData.ChunkXWidth * scale + offset);
+   }
 
     /// <summary>
     /// 

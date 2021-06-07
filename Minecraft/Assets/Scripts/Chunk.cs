@@ -129,7 +129,6 @@ public class Chunk
         int zCheck = Mathf.FloorToInt(pos.z);
 
         xCheck -= Mathf.FloorToInt(_chunkObject.transform.position.x);
-        //yCheck -= Mathf.FloorToInt(_chunkObject.transform.position.y);
         zCheck -= Mathf.FloorToInt(_chunkObject.transform.position.z);
 
         return VoxelMap[xCheck, yCheck, zCheck];

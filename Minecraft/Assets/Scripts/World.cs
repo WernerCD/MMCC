@@ -5,19 +5,20 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
     public Transform Player;
+    public ChunkCoord PlayerChunkCoord;
     public Vector3 SpawnPosition;
     public Material Material;
     public BlockType[] BlockTypes;
     public int Seed;
     public BiomeAttribute Biome;
-
+    public GameObject DebugScreen;
+    public bool IsCreatingChunks;
 
     private Chunk[,] _chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
     private List<ChunkCoord> _activeChunks = new List<ChunkCoord>();
     private List<ChunkCoord> _createChunks = new List<ChunkCoord>();
-    private ChunkCoord _playerChunkCoord;
     private ChunkCoord _playerLastChunkCoord;
-
+    
     private void Start()
     {
         Random.InitState(Seed);
@@ -28,12 +29,15 @@ public class World : MonoBehaviour
 
     private void Update()
     {
-        _playerChunkCoord = GetChunkCoordFromVector3(Player.position);
-        if (!_playerChunkCoord.Equals(_playerLastChunkCoord)) 
+        PlayerChunkCoord = GetChunkCoordFromVector3(Player.position);
+        if (!PlayerChunkCoord.Equals(_playerLastChunkCoord)) 
             CheckViewDistance();
 
         if (_createChunks.Count > 0 && !IsCreatingChunks)
             StartCoroutine(nameof(CreateChunks));
+
+        if (Input.GetKeyDown(KeyCode.F3))
+            DebugScreen.SetActive(!DebugScreen.activeSelf);
     }
 
     void GenerateWorld()
@@ -47,7 +51,6 @@ public class World : MonoBehaviour
         Player.position = SpawnPosition;
     }
 
-    public bool IsCreatingChunks { get; set; }
     IEnumerator CreateChunks()
     {
         IsCreatingChunks = true;
@@ -70,7 +73,7 @@ public class World : MonoBehaviour
 
     void CheckViewDistance()
     {
-        _playerLastChunkCoord = _playerChunkCoord;
+        _playerLastChunkCoord = PlayerChunkCoord;
         var coord = GetChunkCoordFromVector3(Player.position);
         var previouslyActiveChunks = new List<ChunkCoord>(_activeChunks);
 
@@ -115,9 +118,7 @@ public class World : MonoBehaviour
             return false;
 
         if (_chunks[thisChunk.X, thisChunk.Z] != null && _chunks[thisChunk.X, thisChunk.Z].IsVoxelMapPopulated)
-        {
             return BlockTypes[_chunks[thisChunk.X, thisChunk.Z].GetVoxelFromGlobalVector3(pos)].IsSolid;
-        }
 
         return BlockTypes[GetVoxel(pos)].IsSolid;
     }
