@@ -16,3 +16,18 @@ MonoBehaviour:
   SolidGroundHeight: 42
   TerrainHeight: 42
   TerrainScale: 0.25
+  Lodes:
+  - NodeName: Dirt
+    BlockId: 5
+    MinHeight: 1
+    MaxHeight: 255
+    Scale: 0.1
+    Threshold: 0.5
+    NoiseOffset: 0
+  - NodeName: Sand
+    BlockId: 4
+    MinHeight: 20
+    MaxHeight: 50
+    Scale: 0.2
+    Threshold: 0.6
+    NoiseOffset: 500

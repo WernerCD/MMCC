@@ -214,8 +214,61 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &790242618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 790242619}
+  - component: {fileID: 790242620}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &790242619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790242618}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1002.96, y: 125.554665, z: 92.70819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 963194228}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &790242620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 790242618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d625cc1d93060164e973847288d5eb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WalkSpeed: 3
+  SprintSpeed: 6
+  JumpForce: 5
+  Gravity: -9.8
+  IsGrounded: 0
+  IsSprinting: 0
+  PlayerHeight: 1.8
+  PlayerWidth: 0.3
+  BoundsTolerance: 0.1
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,11 +345,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.16, z: -13.42}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.8, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 790242619}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123740581
@@ -328,7 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e41cced4a36af445a7a1df11bd566d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 963194228}
+  Player: {fileID: 790242619}
   SpawnPosition: {x: 0, y: 0, z: 0}
   Material: {fileID: 2100000, guid: aa5e4db37035b164f82da91af1aff277, type: 2}
   BlockTypes:
@@ -364,14 +417,6 @@ MonoBehaviour:
     BottomFaceTexture: 2
     LeftFaceTexture: 3
     RightFaceTexture: 3
-  - BlockName: Furnace
-    IsSolid: 1
-    BackFaceTexture: 44
-    FrontFaceTexture: 61
-    TopFaceTexture: 62
-    BottomFaceTexture: 62
-    LeftFaceTexture: 46
-    RightFaceTexture: 45
   - BlockName: Sand
     IsSolid: 1
     BackFaceTexture: 18
@@ -388,6 +433,14 @@ MonoBehaviour:
     BottomFaceTexture: 2
     LeftFaceTexture: 2
     RightFaceTexture: 2
+  - BlockName: Furnace
+    IsSolid: 1
+    BackFaceTexture: 44
+    FrontFaceTexture: 61
+    TopFaceTexture: 62
+    BottomFaceTexture: 62
+    LeftFaceTexture: 46
+    RightFaceTexture: 45
   Seed: 2147483647
   Biome: {fileID: 11400000, guid: f3ac33f72b2b7fd4ebe25b7abc546696, type: 2}
 --- !u!4 &2123740583
@@ -402,5 +455,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
