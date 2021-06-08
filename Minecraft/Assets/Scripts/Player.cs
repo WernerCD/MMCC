@@ -9,10 +9,10 @@ public class Player : MonoBehaviour
     public float SprintSpeed = 6f;
     public float JumpForce = 5f;
     public float Gravity = -9.8f;
-    public float CheckIncrement = 0.1f;
+    public float CheckIncrement = 0.01f;
     public float Reach = 8f;
 
-    public Transform BlockHighlight;
+    public Transform HighlightBlock;
     public Transform PlaceBlock;
 
     public Text SelectedBlockText;
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
         // Vertical Momentum Application
         _velocity += Vector3.up * _verticalMomentum * Time.fixedDeltaTime;
 
-        if ((_velocity.z > 0 && FrontBlocked) || (_velocity.z < 0 && BackBlocked))
+        if ((_velocity.z > 0 && FrontBlocked) || (_velocity.z < 0 && BackBlocked)) 
             _velocity.z = 0;
         if ((_velocity.x > 0 && LeftBlocked) || (_velocity.x < 0 && RightBlocked))
             _velocity.x = 0;
@@ -123,11 +123,11 @@ public class Player : MonoBehaviour
             SelectedBlockText.text = $"{_world.BlockTypes[SelectedBlockIndex].BlockName} block selected";
         }
 
-        if (BlockHighlight.gameObject.activeSelf)
+        if (HighlightBlock.gameObject.activeSelf)
         {
             // Destroy Block
             if (Input.GetMouseButtonDown(0))
-                _world.GetChunkFromVector3(BlockHighlight.position).EditVoxel(BlockHighlight.position, 0);
+                _world.GetChunkFromVector3(HighlightBlock.position).EditVoxel(HighlightBlock.position, 0);
 
             // Place Block
             if (Input.GetMouseButtonDown(1))
@@ -145,10 +145,10 @@ public class Player : MonoBehaviour
             Vector3 pos = _cam.position + (_cam.forward * step);
             if (_world.CheckForVoxel(pos))
             {
-                BlockHighlight.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+                HighlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 PlaceBlock.position = lastPos;
                 
-                BlockHighlight.gameObject.SetActive(true);
+                HighlightBlock.gameObject.SetActive(true);
                 PlaceBlock.gameObject.SetActive(true);
                 return;
             }
@@ -156,7 +156,7 @@ public class Player : MonoBehaviour
             lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
             step += CheckIncrement;
         }
-        BlockHighlight.gameObject.SetActive(false);
+        HighlightBlock.gameObject.SetActive(false);
         PlaceBlock.gameObject.SetActive(false);
     }
 

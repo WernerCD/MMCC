@@ -123,7 +123,7 @@ public class World : MonoBehaviour
     {
         var thisChunk = new ChunkCoord(pos);
 
-        if (!IsVoxelInWorld(pos) || pos.y < 0 || pos.y > VoxelData.ChunkYHeight) 
+        if (!IsChunkInWorld(thisChunk) || pos.y < 0 || pos.y > VoxelData.ChunkYHeight) 
             return false;
 
         if (_chunks[thisChunk.X, thisChunk.Z] != null && _chunks[thisChunk.X, thisChunk.Z].IsVoxelMapPopulated)
@@ -141,10 +141,12 @@ public class World : MonoBehaviour
         /* Immutable Pass */
 
         // if outside the world, air
-        if (!IsVoxelInWorld(pos)) return BlockTypeEnums.Air.ToByte();
+        if (!IsVoxelInWorld(pos))
+            return BlockTypeEnums.Air.ToByte();
 
         // bottom chunk, bedrock
-        if (yPos == 0) return BlockTypeEnums.Bedrock.ToByte();
+        if (yPos == 0) 
+            return BlockTypeEnums.Bedrock.ToByte();
 
         /* Basic Terrain Pass */
 
@@ -161,7 +163,7 @@ public class World : MonoBehaviour
             voxelValue = BlockTypeEnums.Stone.ToByte();
 
         /* Second Pass */
-        if (voxelValue == 2)
+        if (voxelValue == BlockTypeEnums.Stone.ToByte())
         {
             foreach (var lode in Biome.Lodes)
             {
