@@ -126,10 +126,11 @@ public class Player : MonoBehaviour
         if (BlockHighlight.gameObject.activeSelf)
         {
             // Destroy Block
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
                 _world.GetChunkFromVector3(BlockHighlight.position).EditVoxel(BlockHighlight.position, 0);
+
             // Place Block
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButtonDown(1))
                 _world.GetChunkFromVector3(PlaceBlock.position).EditVoxel(PlaceBlock.position, SelectedBlockIndex);
         }
     }
@@ -146,6 +147,7 @@ public class Player : MonoBehaviour
             {
                 BlockHighlight.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 PlaceBlock.position = lastPos;
+                
                 BlockHighlight.gameObject.SetActive(true);
                 PlaceBlock.gameObject.SetActive(true);
                 return;
