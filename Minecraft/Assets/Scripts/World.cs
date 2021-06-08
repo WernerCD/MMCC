@@ -23,7 +23,7 @@ public class World : MonoBehaviour
     private void Start()
     {
         Random.InitState(Seed);
-        SpawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f, VoxelData.ChunkYHeight, (VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f);
+        SpawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f, VoxelData.ChunkYHeight / 2f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkXWidth) / 2f);
         GenerateWorld();
         _playerLastChunkCoord = GetChunkCoordFromVector3(Player.position);
     }
@@ -31,6 +31,8 @@ public class World : MonoBehaviour
     private void Update()
     {
         _playerChunkCoord = GetChunkCoordFromVector3(Player.position);
+
+        // Update if player has moved chunks
         if (!_playerChunkCoord.Equals(_playerLastChunkCoord)) 
             CheckViewDistance();
 
@@ -63,13 +65,19 @@ public class World : MonoBehaviour
         }
         IsCreatingChunks = false;
     }
-
-
+    
     ChunkCoord GetChunkCoordFromVector3(Vector3 pos)
     {
         var x = Mathf.FloorToInt((pos.x / VoxelData.ChunkXWidth));
         var z = Mathf.FloorToInt((pos.z / VoxelData.ChunkXWidth));
         return new ChunkCoord(x, z);
+    }
+
+    public Chunk GetChunkFromVector3(Vector3 pos)
+    {
+        var x = Mathf.FloorToInt((pos.x / VoxelData.ChunkXWidth));
+        var z = Mathf.FloorToInt((pos.z / VoxelData.ChunkXWidth));
+        return _chunks[x, z];
     }
 
     void CheckViewDistance()
@@ -126,7 +134,6 @@ public class World : MonoBehaviour
 
     public byte GetVoxel(Vector3 pos)
     {
-
         int xPos = Mathf.FloorToInt(pos.x);
         int yPos = Mathf.FloorToInt(pos.y);
         int zPos = Mathf.FloorToInt(pos.z);
@@ -164,12 +171,6 @@ public class World : MonoBehaviour
             }
         }
         return voxelValue;
-    }
-
-    void CreateNewChunk(int x, int z, bool generateOnLoad)
-    {
-        _chunks[x, z] = new Chunk(this, new ChunkCoord(x, z), generateOnLoad);
-        _activeChunks.Add(new ChunkCoord(x, z));
     }
 
     bool IsChunkInWorld(ChunkCoord coord) =>
